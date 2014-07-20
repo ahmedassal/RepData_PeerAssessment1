@@ -2,19 +2,57 @@
 
 
 ## Loading and preprocessing the data
+Loading required libraries
+```{r, echo = TRUE}
+library(ggplot2)
+```
+Downloading data
+```{r, echo = TRUE}
+setwd("d:/DEV/R/Learning")
+#fileUrl="https://d396qusza40orc.cloudfront.net/repdata%2Fdata%2Factivity.zip"
+fileURL="https://d396qusza40orc.cloudfront.net/repdata%2Fdata%2Factivity.zip"
+if(!file.exists("gettingData")){
+  dir.create("gettingData")
+}
+setwd("d:/DEV/R/Learning/gettingData")
+download.file(fileUrl, destfile = "activity.zip", method="auto")
+list.files(".//gettingData")
+activityDateDownloaded = date()
+```
+
+Loading activities data and changing  the date into a format suitable for our analysis:
+```{r preparation, echo = TRUE}
+activities=read.csv(unz(description ="activity.zip", "activity.csv"), sep=",")
+str(activities)
+activities$date = as.Date(activities$date, format="%Y-%m-%d")
+activities$fdate = factor(activities$date)
+```
 
 
 
 ## What is mean total number of steps taken per day?
-
+```{r, echo = TRUE}
+sumData=tapply(activities$steps, activities$fdate,sum, na.rm=TRUE)
+hist(sumData)
+mean(sumData, na.rm = TRUE)
+median(sumData, na.rm = TRUE)
+```
 
 
 ## What is the average daily activity pattern?
-
+```{r, echo = TRUE}
+library(ggplot2)
+plot(activities$fdate, sumData, type="l")
+```
 
 
 ## Imputing missing values
+```{r, echo = TRUE}
 
+```
 
 
 ## Are there differences in activity patterns between weekdays and weekends?
+```{r, echo = TRUE}
+
+```
