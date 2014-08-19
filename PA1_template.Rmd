@@ -4,6 +4,7 @@
 ## Loading and preprocessing the data
 Loading required libraries
 ```{r, echo = TRUE}
+install.packages("ggplot2")
 library(ggplot2)
 ```
 Downloading data
@@ -33,7 +34,10 @@ activities$fdate = factor(activities$date)
 ## What is mean total number of steps taken per day?
 ```{r, echo = TRUE}
 sumData=tapply(activities$steps, activities$fdate,sum, na.rm=TRUE)
+png(filename=".//figure/Total_number_of_steps_per_day_(Histogram).png", width = 480, height = 480, units = "px", pointsize = 12, bg = "white", res = NA, family = "", restoreConsole = TRUE)
 hist(sumData)
+dev.off()
+
 mean(sumData, na.rm = TRUE)
 median(sumData, na.rm = TRUE)
 ```
@@ -42,7 +46,20 @@ median(sumData, na.rm = TRUE)
 ## What is the average daily activity pattern?
 ```{r, echo = TRUE}
 library(ggplot2)
-plot(activities$fdate, sumData, type="l")
+
+sum = data.frame(dimnames(sumData),sumData)
+names(sum)=c("date", "activities")
+png(filename=".//figure/Average_Daily_Activity_Pattern.png", width = 480, height = 480, units = "px", pointsize = 12, bg = "white", res = NA, family = "", restoreConsole = TRUE)
+#ggplot2(activities$fdate, sumData, type="l")
+
+qplot(data=sum) +
+  geom_point(aes(x=sum$date, y = sum$activties)) 
+  #geom_point(data = ds, aes(x = gp, y = mean),
+  #                      colour = 'red', size = 3) +
+  #geom_errorbar(data = ds, aes(x = gp, y = mean,
+   #                 ymin = mean - sd, ymax = mean + sd),
+    #                colour = 'red', width = 0.4)
+dev.off()
 ```
 
 
