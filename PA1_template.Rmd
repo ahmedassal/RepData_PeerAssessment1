@@ -60,19 +60,18 @@ median(sumData, na.rm = TRUE)
 avgData=tapply(activities$steps, activities$interval,mean, na.rm=TRUE)
 avg = data.frame(dimnames(avgData),avgData)
 names(avg)=c("Interval", "Activities")
-#png(filename=".//figure/Average_Daily_Activity_Pattern.png", width = 480, height = 480, units = "px", pointsize = 12, bg = "white", res = NA, family = "", restoreConsole = TRUE)
+png(filename=".//figure/Average_Daily_Activity_Pattern.png", width = 480, height = 480, units = "px", pointsize = 12, bg = "white", res = NA, family = "", restoreConsole = TRUE)
 #ggplot2(activities$fdate, sumData, type="l")
 
 #qplot(avg$Interval, avg$Activities, geom = "path")
-plot(avg$Interval, avg$Activities, type = "l")
-ggplot() +
-geom_point(data = avg, aes(x = Interval, y = Activities),colour = 'red', size = 1) 
-  #geom_point(data = ds, aes(x = gp, y = mean),
-  #                      colour = 'red', size = 3) +
-  #geom_errorbar(data = ds, aes(x = gp, y = mean,
-   #                 ymin = mean - sd, ymax = mean + sd),
-    #                colour = 'red', width = 0.4)
-#dev.off()
+#plot(avg$Interval, avg$Activities, type = "l")
+theme(axis.text.x = element_text(angle = 90, hjust = 0))
+ggplot(data= avg, aes(x = order(Interval), y = Activities), ordered=TRUE) + geom_line() + geom_point(colour = 'red', size = 3)+
+  xlab("Interval") +
+  ylab("Average number of steps taken, averaged across all days") +
+  ggtitle("Average Daily Activity Pattern")
+  
+dev.off()
 intervalOfMaxAverageStepsNo_Index = which.max(avg$Activities)
 intervalOfMaxAverageStepsNo_Value = max(avg$Activities)
 ```
