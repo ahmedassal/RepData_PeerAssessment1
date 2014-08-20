@@ -4,7 +4,7 @@
 ## Loading and preprocessing the data
 Loading required libraries
 ```{r, echo = TRUE}
-install.packages("ggplot2")
+#install.packages("ggplot2")
 library(ggplot2)
 ```
 Downloading data
@@ -36,7 +36,16 @@ activities$finterval = factor(activities$interval)
 ```{r, echo = TRUE}
 sumData=tapply(activities$steps, activities$fdate,sum, na.rm=TRUE)
 png(filename=".//figure/Total_number_of_steps_per_day_(Histogram).png", width = 480, height = 480, units = "px", pointsize = 12, bg = "white", res = NA, family = "", restoreConsole = TRUE)
+sum = data.frame(dimnames(sumData),sumData)
+names(sum)=c("Date", "Steps")
 hist(sumData)
+
+dev.off()
+png(filename=".//figure/Total_number_of_steps_per_day.png", width = 480, height = 480, units = "px", pointsize = 12, bg = "white", res = NA, family = "", restoreConsole = TRUE)
+a = ggplot(data = sum, aes(x=as.Date(Date), y=Steps), ordered=TRUE) + geom_line() + geom_point()+
+  labs(x = "Month", y = " Total Number of Steps Taken Each Day")
+a
+
 dev.off()
 
 mean(sumData, na.rm = TRUE)
@@ -46,7 +55,7 @@ median(sumData, na.rm = TRUE)
 
 ## What is the average daily activity pattern?
 ```{r, echo = TRUE}
-library(ggplot2)
+
 #avgData=tapply(activities$steps, factor(activities$interval),mean, na.rm=TRUE)
 avgData=tapply(activities$steps, activities$interval,mean, na.rm=TRUE)
 avg = data.frame(dimnames(avgData),avgData)
@@ -64,7 +73,8 @@ geom_point(data = avg, aes(x = Interval, y = Activities),colour = 'red', size = 
    #                 ymin = mean - sd, ymax = mean + sd),
     #                colour = 'red', width = 0.4)
 #dev.off()
-#intervalOfMaxAverageStepsNo = max(avg$)
+intervalOfMaxAverageStepsNo_Index = which.max(avg$Activities)
+intervalOfMaxAverageStepsNo_Value = max(avg$Activities)
 ```
 
 
