@@ -1,22 +1,26 @@
+---
+output: pdf_document
+---
 # Reproducible Research: Peer Assessment 1
 
 
 ## Loading and preprocessing the data
 Loading required libraries
 ```{r Libraries, echo = TRUE}
-install.packages("ggplot2")
+#install.packages("ggplot2")
 library(ggplot2)
 ```
 Downloading data
 ```{r Downloads, echo = TRUE}
-setwd("d:/wokring/AHA/DEV/R/Learning")
+setwd("D:/Woking/AHA/DEV/John Hopkins Data Science/ReproducibleResearch/RepData_PeerAssessment1")
 #fileUrl="https://d396qusza40orc.cloudfront.net/repdata%2Fdata%2Factivity.zip"
-fileURL="https://d396qusza40orc.cloudfront.net/repdata%2Fdata%2Factivity.zip"
-if(!file.exists("gettingData")){
-  dir.create("gettingData")
-}
-setwd("d:/DEV/R/Learning/gettingData")
-download.file(fileUrl, destfile = "activity.zip", method="auto")
+#fileURL="https://d396qusza40orc.cloudfront.net/repdata%2Fdata%2Factivity.zip"
+ fileURL="http://d396qusza40orc.cloudfront.net/repdata%2Fdata%2Factivity.zip"
+#if(!file.exists("gettingData")){
+  #dir.create("gettingData")
+#}
+setwd("D:/Woking/AHA/DEV/John Hopkins Data Science/ReproducibleResearch/RepData_PeerAssessment1")
+download.file(fileURL, destfile = "activity.zip", method="auto")
 list.files(".//gettingData")
 activityDateDownloaded = date()
 ```
@@ -33,7 +37,7 @@ activities$finterval = factor(activities$interval)
 
 
 ## What is mean total number of steps taken per day?
-```{r Mean total number of steps taken per day, echo = TRUE}
+```{r Graph of mean of the total number of steps taken per day, echo = TRUE}
 sumData=tapply(activities$steps, activities$fdate,sum, na.rm=TRUE)
 png(filename=".//figure/Total_number_of_steps_per_day_(Histogram).png", width = 480, height = 480, units = "px", pointsize = 12, bg = "white", res = NA, family = "", restoreConsole = TRUE)
 sum = data.frame(dimnames(sumData),sumData)
@@ -47,9 +51,12 @@ a = ggplot(data = sum, aes(x=as.Date(Date), y=Steps), ordered=TRUE) + geom_line(
 a
 
 dev.off()
+```
 
-mean(sumData, na.rm = TRUE)
-median(sumData, na.rm = TRUE)
+The mean and median
+```{r Mean of the total number of steps}
+oldMean = mean(sumData, na.rm = TRUE)
+oldMedian = median(sumData, na.rm = TRUE)
 ```
 
 
@@ -61,15 +68,7 @@ avgData=tapply(activities$steps, activities$interval,mean, na.rm=TRUE)
 avg = data.frame(dimnames(avgData),avgData)
 names(avg)=c("Interval", "Activities")
 png(filename=".//figure/Average_Daily_Activity_Pattern.png", width = 480, height = 480, units = "px", pointsize = 12, bg = "white", res = NA, family = "", restoreConsole = TRUE)
-<<<<<<< HEAD
 
-=======
-#ggplot2(activities$fdate, sumData, type="l")
-
-#qplot(avg$Interval, avg$Activities, geom = "path")
-#plot(avg$Interval, avg$Activities, type = "l")
->>>>>>> dd7b7c922b4e6b9c9dd9394eeef354b8107bb9f1
-theme(axis.text.x = element_text(angle = 90, hjust = 0))
 ggplot(data= avg, aes(x = order(Interval), y = Activities), ordered=TRUE) + geom_line() + geom_point(colour = 'red', size = 3)+
   xlab("Interval") +
   ylab("Average number of steps taken, averaged across all days") +
@@ -82,11 +81,59 @@ intervalOfMaxAverageStepsNo_Value = max(avg$Activities)
 
 
 ## Imputing missing values
-```{r Imputing missing values, echo = TRUE}
-
+###The total number of missing values in the dataset:
+```{r number of missing values, echo = TRUE}
+missingActivities = activities[is.na(activities$steps),]
+missingActivitiesNO=length(missingActivities$steps)
+activitiesNO =  length(activities$steps)
 ```
 
+###Filling of missing values in the dataset:
+```{r Filling missing values, echo = TRUE}
 
+names(avg)=c("interval", "averageStepsByInterval")
+averagedActivitiesByIntertval=merge(activities, avg, by.x="interval",by.y="interval")
+missingActivitiesIndices = which(is.na(averagedActivitiesByIntertval$steps))
+averagedActivitiesByIntertval[missingActivitiesIndices,2] = averagedActivitiesByIntertval[missingActivitiesIndices,6]
+correctedActivities = averagedActivitiesByIntertval[,1:5]
+```
+
+###Graph of the corrected activities of the total number of steps taken each day
+```{r Graph of mean of the total number of steps taken per day after imputing missing data, echo = TRUE}
+correctedSumData=tapply(correctedActivities$steps, correctedActivities$fdate,sum, na.rm=TRUE)
+png(filename=".//figure/Total_number_of_steps_per_day_(Histogram)(corrected).png", width = 480, height = 480, units = "px", pointsize = 12, bg = "white", res = NA, family = "", restoreConsole = TRUE)
+correctedSum = data.frame(dimnames(correctedSumData),correctedSumData)
+names(correctedSum)=c("Date", "Steps")
+hist(correctedSumData)
+
+dev.off()
+png(filename=".//figure/Total_number_of_steps_per_day_(corrected).png", width = 480, height = 480, units = "px", pointsize = 12, bg = "white", res = NA, family = "", restoreConsole = TRUE)
+a = ggplot(data = correctedSum, aes(x=as.Date(Date), y=Steps), ordered=TRUE) + geom_line() + geom_point()+
+  labs(x = "Month", y = " Total Number of Steps Taken Each Day")
+a
+
+dev.off()
+```
+
+###The mean and median of the corrected activities
+```{r New mean of the total number of steps}
+newMean = mean(correctedSumData, na.rm = TRUE)
+newMedian = median(correctedSumData, na.rm = TRUE)
+```
+####Do these values differ from the estimates from the first part of the assignment? 
+Yes they differ the mean and median have increased slightly
+#####Old values
+```{r old mean and median}
+oldMean
+oldMedian
+```
+##### New Values
+```{r}
+newMean
+newMedian
+```
+####What is the impact of imputing missing data on the estimates of the total daily number of steps?
+The distribution of the data has changed a little. There is an increase in the frequency of the number of steps in general. The maxima of the number of steps is has remained the same while the minima have definitely increased. the mean and median have increased slightly.
 ## Are there differences in activity patterns between weekdays and weekends?
 ```{r differences in activity, echo = TRUE}
 
