@@ -61,7 +61,14 @@ avgData=tapply(activities$steps, activities$interval,mean, na.rm=TRUE)
 avg = data.frame(dimnames(avgData),avgData)
 names(avg)=c("Interval", "Activities")
 png(filename=".//figure/Average_Daily_Activity_Pattern.png", width = 480, height = 480, units = "px", pointsize = 12, bg = "white", res = NA, family = "", restoreConsole = TRUE)
+<<<<<<< HEAD
 
+=======
+#ggplot2(activities$fdate, sumData, type="l")
+
+#qplot(avg$Interval, avg$Activities, geom = "path")
+#plot(avg$Interval, avg$Activities, type = "l")
+>>>>>>> dd7b7c922b4e6b9c9dd9394eeef354b8107bb9f1
 theme(axis.text.x = element_text(angle = 90, hjust = 0))
 ggplot(data= avg, aes(x = order(Interval), y = Activities), ordered=TRUE) + geom_line() + geom_point(colour = 'red', size = 3)+
   xlab("Interval") +
