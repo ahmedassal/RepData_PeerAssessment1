@@ -6,7 +6,7 @@ This report is on activities of a person that is captured via a device for two m
 
 ## Loading and preprocessing the data
 ### Loading required libraries
-```{r Libraries, echo = TRUE}
+```{r Libraries, echo = TRUE, results='hide'}
 #install.packages("ggplot2")
 library(ggplot2)
 library(gridExtra)
@@ -59,7 +59,7 @@ ggplot(data = sum, aes(Steps), ordered=TRUE) + geom_histogram(origin = 0, binwid
 
 ```
 
-The mean and median
+### The mean and median
 ```{r Mean of the total number of steps}
 oldMean = mean(sumData, na.rm = TRUE)
 oldMedian = median(sumData, na.rm = TRUE)
@@ -107,18 +107,21 @@ correctedActivities = averagedActivitiesByIntertval[,1:5]
 ###Graph of the corrected activities of the total number of steps taken each day
 ```{r Graph of mean of the total number of steps taken per day after imputing missing data, echo = TRUE}
 correctedSumData=tapply(correctedActivities$steps, correctedActivities$fdate,sum, na.rm=TRUE)
-png(filename=".//figure/Total_number_of_steps_per_day_(Histogram)(corrected).png", width = 480, height = 480, units = "px", pointsize = 12, bg = "white", res = NA, family = "", restoreConsole = TRUE)
+#png(filename=".//figure/Total_number_of_steps_per_day_(Histogram)(corrected).png", width = 480, height = 480, units = "px", pointsize = 12, bg = "white", res = NA, family = "", restoreConsole = TRUE)
 correctedSum = data.frame(dimnames(correctedSumData),correctedSumData)
 names(correctedSum)=c("Date", "Steps")
-hist(correctedSumData)
+#hist(correctedSumData)
 
-dev.off()
-png(filename=".//figure/Total_number_of_steps_per_day_(corrected).png", width = 480, height = 480, units = "px", pointsize = 12, bg = "white", res = NA, family = "", restoreConsole = TRUE)
+ggplot(data = correctedSum, aes(Steps), ordered=TRUE) + geom_histogram(origin = 0, binwidth=5000, aes(fill = ..count..)) +
+  ggtitle("Total Number of Steps Taken Per Day")
+
+#dev.off()
+#png(filename=".//figure/Total_number_of_steps_per_day_(corrected).png", width = 480, height = 480, units = "px", pointsize = 12, bg = "white", res = NA, family = "", restoreConsole = TRUE)
 a = ggplot(data = correctedSum, aes(x=as.Date(Date), y=Steps), ordered=TRUE) + geom_line() + geom_point()+
   labs(x = "Month", y = " Total Number of Steps Taken Each Day")
 a
 
-dev.off()
+#dev.off()
 ```
 
 ###The mean and median of the corrected activities
@@ -127,17 +130,11 @@ newMean = mean(correctedSumData, na.rm = TRUE)
 newMedian = median(correctedSumData, na.rm = TRUE)
 ```
 ####Do these values differ from the estimates from the first part of the assignment? 
-Yes they differ, the mean and median have increased slightly
-##### Old values
-```{r old mean and median}
-oldMean
-oldMedian
-```
-##### New Values
-```{r}
-newMean
-newMedian
-```
+Yes they differ, the mean and median have increased slightly     
+Old values vs New Values
+old Mean `r oldMean` New Mean `r newMean`
+old Median `r oldMedian` New Median `r newMedian`
+
 ####What is the impact of imputing missing data on the estimates of the total daily number of steps?
 The distribution of the data has changed a little. There is an increase in the frequency of the number of steps in general. The maxima of the number of steps is has remained the same while the minima have definitely increased. the mean and median have increased slightly.
 
@@ -154,12 +151,9 @@ Weekends=tapply(weekendsSubset$steps, weekendsSubset$interval,mean, na.rm=TRUE)
 correctedWeekends = data.frame(dimnames(Weekends),Weekends)
 names(correctedWeekends)=c("Interval", "Steps")
 
-p1 = ggplot(data = correctedWeekdays, aes(x=as.numeric(as.character(Interval)), y=Steps), ordered=TRUE) + geom_line() + geom_point() +
-  labs(x = "Month", y = " Total Number of Steps Taken Each Day, Weekdays")
-p1
-p2 = ggplot(data = correctedWeekends, aes(x=as.numeric(as.character(Interval)), y=Steps), ordered=TRUE) + geom_line() + geom_point()+
-  labs(x = "Month", y = " Total Number of Steps Taken Each Day, Weekends")
-p2
-
-
+a1 = qplot(x=as.numeric(as.character(Interval)), y=Steps, data = correctedWeekdays,  ordered=TRUE) + geom_line() + geom_point() +
+  labs(x = "Weekdays", y = "Number of Steps")
+a2 = qplot(x=as.numeric(as.character(Interval)), y=Steps, data = correctedWeekends, ordered=TRUE) + geom_line() + geom_point()+
+  labs(x = "Weekends", y = "Number of Steps")
+grid.arrange(a2, a1, nrow=2)
 ```
