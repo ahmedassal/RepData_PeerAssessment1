@@ -9,11 +9,12 @@ This report is on activities of a person that is captured via a device for two m
 ```{r Libraries, echo = TRUE}
 #install.packages("ggplot2")
 library(ggplot2)
+library(gridExtra)
 ```
 ### Downloading data
 Data are downloaded from http://d396qusza40orc.cloudfront.net/repdata%2Fdata%2Factivity.zip. The link is to a zip file that contains a single csv file namely, activity.csv. The file is assumed to be downloaded and extratced to the working directory of this application prior to generating the report.
 
-```{r Downloads, echo = TRUE}
+```{r Data Downloading, echo = TRUE}
 setwd("D:/Woking/AHA/DEV/John Hopkins Data Science/ReproducibleResearch/RepData_PeerAssessment1")
 
 #fileURL="http://d396qusza40orc.cloudfront.net/repdata%2Fdata%2Factivity.zip"
@@ -26,32 +27,36 @@ setwd("D:/Woking/AHA/DEV/John Hopkins Data Science/ReproducibleResearch/RepData_
 #activityDateDownloaded = date()
 ```
 
-Loading activities data and changing  the date into a format suitable for our analysis:
-```{r Data Preparation, echo = TRUE}
+### Loading activities data
+```{r Data Loading, echo = TRUE}
 activities=read.csv(unz(description ="activity.zip", "activity.csv"), sep=",")
 str(activities)
+```
+### Changing  the date and interval format
+```{r Data Preparation, echo = TRUE}
+#proper date format
 activities$date = as.Date(activities$date, format="%Y-%m-%d")
+#date into a factor
 activities$fdate = factor(activities$date)
+#interval into a factor
 activities$finterval = factor(activities$interval)
 ```
-
 
 
 ## What is mean total number of steps taken per day?
 ```{r Graph of mean of the total number of steps taken per day, echo = TRUE}
 sumData=tapply(activities$steps, activities$fdate,sum, na.rm=TRUE)
-png(filename=".//figure/Total_number_of_steps_per_day_(Histogram).png", width = 480, height = 480, units = "px", pointsize = 12, bg = "white", res = NA, family = "", restoreConsole = TRUE)
+# png(filename=".//figure/Total_number_of_steps_per_day_(Histogram).png", width = 480, height = 480, units = "px", pointsize = 12, bg = "white", res = NA, family = "", restoreConsole = TRUE)
+# dev.off()
 sum = data.frame(dimnames(sumData),sumData)
 names(sum)=c("Date", "Steps")
-hist(sumData)
 
-dev.off()
-png(filename=".//figure/Total_number_of_steps_per_day.png", width = 480, height = 480, units = "px", pointsize = 12, bg = "white", res = NA, family = "", restoreConsole = TRUE)
-a = ggplot(data = sum, aes(x=as.Date(Date), y=Steps), ordered=TRUE) + geom_line() + geom_point()+
-  labs(x = "Month", y = " Total Number of Steps Taken Each Day")
-a
+# png(filename=".//figure/Total_number_of_steps_per_day.png", width = 480, height = 480, units = "px", pointsize = 12, bg = "white", res = NA, family = "", restoreConsole = TRUE)
+# dev.off()
+ggplot(data = sum, aes(Steps), ordered=TRUE) + geom_histogram(origin = 0, binwidth=5000, aes(fill = ..count..)) +
+  ggtitle("Total Number of Steps Taken Per Day")
 
-dev.off()
+
 ```
 
 The mean and median
@@ -59,23 +64,23 @@ The mean and median
 oldMean = mean(sumData, na.rm = TRUE)
 oldMedian = median(sumData, na.rm = TRUE)
 ```
-
+The mean is ```r oldMean```
+The median is ```r oldMedian```
 
 ## What is the average daily activity pattern?
 ```{r Average daily activity pattern, echo = TRUE}
-
-
 avgData=tapply(activities$steps, activities$interval,mean, na.rm=TRUE)
 avg = data.frame(dimnames(avgData),avgData)
 names(avg)=c("Interval", "Activities")
-png(filename=".//figure/Average_Daily_Activity_Pattern.png", width = 480, height = 480, units = "px", pointsize = 12, bg = "white", res = NA, family = "", restoreConsole = TRUE)
+#png(filename=".//figure/Average_Daily_Activity_Pattern.png", width = 480, height = 480, units = "px", pointsize = 12, bg = "white", res = NA, family = "", restoreConsole = TRUE)
 
-ggplot(data= avg, aes(x = order(Interval), y = Activities), ordered=TRUE) + geom_line() + geom_point(colour = 'red', size = 3)+
+ggplot(data= avg, aes(x = as.numeric(as.character(Interval)), y = Activities), ordered=TRUE) + geom_line() + geom_point(colour = 'red', size = 1)+
   xlab("Interval") +
-  ylab("Average number of steps taken, averaged across all days") +
+  ylab("Average # steps Per Day") +
   ggtitle("Average Daily Activity Pattern")
+  #xlim(0,5000)
   
-dev.off()
+#dev.off()
 intervalOfMaxAverageStepsNo_Index = which.max(avg$Activities)
 intervalOfMaxAverageStepsNo_Value = max(avg$Activities)
 ```
@@ -122,7 +127,7 @@ newMean = mean(correctedSumData, na.rm = TRUE)
 newMedian = median(correctedSumData, na.rm = TRUE)
 ```
 ####Do these values differ from the estimates from the first part of the assignment? 
-Yes they differ the mean and median have increased slightly
+Yes they differ, the mean and median have increased slightly
 ##### Old values
 ```{r old mean and median}
 oldMean
@@ -135,7 +140,26 @@ newMedian
 ```
 ####What is the impact of imputing missing data on the estimates of the total daily number of steps?
 The distribution of the data has changed a little. There is an increase in the frequency of the number of steps in general. The maxima of the number of steps is has remained the same while the minima have definitely increased. the mean and median have increased slightly.
+
 ## Are there differences in activity patterns between weekdays and weekends?
 ```{r differences in activity, echo = TRUE}
+correctedActivities$day = ifelse(weekdays(as.Date(correctedActivities$date)) %in% c("Saturday", "Sunday"), "Weekend", "Weekday")
+weekdaysSubset = subset(correctedActivities, correctedActivities$day == "Weekday")
+weekendsSubset = subset(correctedActivities, correctedActivities$day == "Weekend")
+Weekdays=tapply(weekdaysSubset$steps, weekdaysSubset$interval,sum, na.rm=TRUE)
+correctedWeekdays = data.frame(dimnames(Weekdays),Weekdays)
+names(correctedWeekdays)=c("Interval", "Steps")
+
+Weekends=tapply(weekendsSubset$steps, weekendsSubset$interval,mean, na.rm=TRUE)
+correctedWeekends = data.frame(dimnames(Weekends),Weekends)
+names(correctedWeekends)=c("Interval", "Steps")
+
+p1 = ggplot(data = correctedWeekdays, aes(x=as.numeric(as.character(Interval)), y=Steps), ordered=TRUE) + geom_line() + geom_point() +
+  labs(x = "Month", y = " Total Number of Steps Taken Each Day, Weekdays")
+p1
+p2 = ggplot(data = correctedWeekends, aes(x=as.numeric(as.character(Interval)), y=Steps), ordered=TRUE) + geom_line() + geom_point()+
+  labs(x = "Month", y = " Total Number of Steps Taken Each Day, Weekends")
+p2
+
 
 ```
