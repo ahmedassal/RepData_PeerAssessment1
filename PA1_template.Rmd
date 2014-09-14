@@ -1,28 +1,29 @@
 ---
-output: pdf_document
+output: html_document
 ---
 # Reproducible Research: Peer Assessment 1
-
+This report is on activities of a person that is captured via a device for two month every 5 minutes. This report will explore these data and perform some basic data analysis on them.
 
 ## Loading and preprocessing the data
-Loading required libraries
+### Loading required libraries
 ```{r Libraries, echo = TRUE}
 #install.packages("ggplot2")
 library(ggplot2)
 ```
-Downloading data
+### Downloading data
+Data are downloaded from http://d396qusza40orc.cloudfront.net/repdata%2Fdata%2Factivity.zip. The link is to a zip file that contains a single csv file namely, activity.csv. The file is assumed to be downloaded and extratced to the working directory of this application prior to generating the report.
+
 ```{r Downloads, echo = TRUE}
 setwd("D:/Woking/AHA/DEV/John Hopkins Data Science/ReproducibleResearch/RepData_PeerAssessment1")
-#fileUrl="https://d396qusza40orc.cloudfront.net/repdata%2Fdata%2Factivity.zip"
-#fileURL="https://d396qusza40orc.cloudfront.net/repdata%2Fdata%2Factivity.zip"
- fileURL="http://d396qusza40orc.cloudfront.net/repdata%2Fdata%2Factivity.zip"
+
+#fileURL="http://d396qusza40orc.cloudfront.net/repdata%2Fdata%2Factivity.zip"
 #if(!file.exists("gettingData")){
   #dir.create("gettingData")
 #}
-setwd("D:/Woking/AHA/DEV/John Hopkins Data Science/ReproducibleResearch/RepData_PeerAssessment1")
-download.file(fileURL, destfile = "activity.zip", method="auto")
-list.files(".//gettingData")
-activityDateDownloaded = date()
+
+#download.file(fileURL, destfile = "activity.zip", method="auto")
+#list.files(".//gettingData")
+#activityDateDownloaded = date()
 ```
 
 Loading activities data and changing  the date into a format suitable for our analysis:
@@ -122,7 +123,7 @@ newMedian = median(correctedSumData, na.rm = TRUE)
 ```
 ####Do these values differ from the estimates from the first part of the assignment? 
 Yes they differ the mean and median have increased slightly
-#####Old values
+##### Old values
 ```{r old mean and median}
 oldMean
 oldMedian

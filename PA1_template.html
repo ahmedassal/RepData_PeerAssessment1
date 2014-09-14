@@ -70,7 +70,7 @@ library(ggplot2)</code></pre>
 setwd(&quot;D:/Woking/AHA/DEV/John Hopkins Data Science/ReproducibleResearch/RepData_PeerAssessment1&quot;)
 download.file(fileURL, destfile = &quot;activity.zip&quot;, method=&quot;auto&quot;)
 list.files(&quot;.//gettingData&quot;)</code></pre>
-<pre><code>## [1] &quot;activity.zip&quot;         &quot;PA1_template.knit.md&quot;</code></pre>
+<pre><code>## [1] &quot;activity.zip&quot;         &quot;gettingData&quot;          &quot;PA1_template.knit.md&quot;</code></pre>
 <pre class="r"><code>activityDateDownloaded = date()</code></pre>
 <p>Loading activities data and changing the date into a format suitable for our analysis:</p>
 <pre class="r"><code>activities=read.csv(unz(description =&quot;activity.zip&quot;, &quot;activity.csv&quot;), sep=&quot;,&quot;)
