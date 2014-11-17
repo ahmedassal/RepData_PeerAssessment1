@@ -15,7 +15,16 @@ library(gridExtra)
 Data are downloaded from http://d396qusza40orc.cloudfront.net/repdata%2Fdata%2Factivity.zip. The link is to a zip file that contains a single csv file namely, activity.csv. The file is assumed to be downloaded and extratced to the working directory of this application prior to generating the report.
 
 ```{r Data Downloading, echo = TRUE}
-setwd(".")
+setwd("D:/Woking/AHA/DEV/John Hopkins Data Science/ReproducibleResearch/RepData_PeerAssessment1")
+
+#fileURL="http://d396qusza40orc.cloudfront.net/repdata%2Fdata%2Factivity.zip"
+#if(!file.exists("gettingData")){
+  #dir.create("gettingData")
+#}
+
+#download.file(fileURL, destfile = "activity.zip", method="auto")
+#list.files(".//gettingData")
+#activityDateDownloaded = date()
 ```
 
 ### Loading activities data
@@ -37,24 +46,17 @@ activities$finterval = factor(activities$interval)
 ## What is mean total number of steps taken per day?
 ```{r Graph of mean of the total number of steps taken per day, echo = TRUE}
 sumData=tapply(activities$steps, activities$fdate,sum, na.rm=TRUE)
+# png(filename=".//figure/Total_number_of_steps_per_day_(Histogram).png", width = 480, height = 480, units = "px", pointsize = 12, bg = "white", res = NA, family = "", restoreConsole = TRUE)
+# dev.off()
 sum = data.frame(dimnames(sumData),sumData)
 names(sum)=c("Date", "Steps")
-```
 
-```{r}
-#Render to the a png file
-png(filename=".//figure/Total_number_of_steps_per_day.png", width = 480, height = 480, units = "px", pointsize = 12, bg = "white", res = NA, family = "", restoreConsole = TRUE)
-dev.off()
+# png(filename=".//figure/Total_number_of_steps_per_day.png", width = 480, height = 480, units = "px", pointsize = 12, bg = "white", res = NA, family = "", restoreConsole = TRUE)
+# dev.off()
 ggplot(data = sum, aes(Steps), ordered=TRUE) + geom_histogram(origin = 0, binwidth=5000, aes(fill = ..count..)) +
   ggtitle("Total Number of Steps Taken Per Day")
 
-dev.off()
-```
 
-```{r}
-#Render to report
-ggplot(data = sum, aes(Steps), ordered=TRUE) + geom_histogram(origin = 0, binwidth=5000, aes(fill = ..count..)) +
-  ggtitle("Total Number of Steps Taken Per Day")
 ```
 
 ### The mean and median
@@ -79,14 +81,9 @@ ggplot(data= avg, aes(x = as.numeric(as.character(Interval)), y = Activities), o
   #xlim(0,5000)
   
 #dev.off()
-```
-```{r}
 intervalOfMaxAverageStepsNo_Index = which.max(avg$Activities)
 intervalOfMaxAverageStepsNo_Value = max(avg$Activities)
-
 ```
-
-The maximum value is @ `r intervalOfMaxAverageStepsNo_Index ` and its value is `r intervalOfMaxAverageStepsNo_Value`
 
 
 ## Imputing missing values
@@ -98,7 +95,6 @@ activitiesNO =  length(activities$steps)
 ```
 
 ###Filling of missing values in the dataset:
-In this analysis, I will substitute the missing values with the mean value of that interval across all days in the study.
 ```{r Filling missing values, echo = TRUE}
 
 names(avg)=c("interval", "averageStepsByInterval")
@@ -111,7 +107,7 @@ correctedActivities = averagedActivitiesByIntertval[,1:5]
 ###Graph of the corrected activities of the total number of steps taken each day
 ```{r Graph of mean of the total number of steps taken per day after imputing missing data, echo = TRUE}
 correctedSumData=tapply(correctedActivities$steps, correctedActivities$fdate,sum, na.rm=TRUE)
-png(filename=".//figure/Total_number_of_steps_per_day_(Histogram)(corrected).png", width = 480, height = 480, units = "px", pointsize = 12, bg = "white", res = NA, family = "", restoreConsole = TRUE)
+#png(filename=".//figure/Total_number_of_steps_per_day_(Histogram)(corrected).png", width = 480, height = 480, units = "px", pointsize = 12, bg = "white", res = NA, family = "", restoreConsole = TRUE)
 correctedSum = data.frame(dimnames(correctedSumData),correctedSumData)
 names(correctedSum)=c("Date", "Steps")
 #hist(correctedSumData)
@@ -125,7 +121,7 @@ a = ggplot(data = correctedSum, aes(x=as.Date(Date), y=Steps), ordered=TRUE) + g
   labs(x = "Month", y = " Total Number of Steps Taken Each Day")
 a
 
-dev.off()
+#dev.off()
 ```
 
 ###The mean and median of the corrected activities
