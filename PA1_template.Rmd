@@ -44,7 +44,6 @@ names(sum)=c("Date", "Steps")
 ```{r}
 #Render to the a png file
 png(filename=".//figure/Total_number_of_steps_per_day.png", width = 480, height = 480, units = "px", pointsize = 12, bg = "white", res = NA, family = "", restoreConsole = TRUE)
-dev.off()
 ggplot(data = sum, aes(Steps), ordered=TRUE) + geom_histogram(origin = 0, binwidth=5000, aes(fill = ..count..)) +
   ggtitle("Total Number of Steps Taken Per Day")
 
@@ -109,7 +108,7 @@ correctedActivities = averagedActivitiesByIntertval[,1:5]
 ```
 
 ###Graph of the corrected activities of the total number of steps taken each day
-```{r Graph of mean of the total number of steps taken per day after imputing missing data, echo = TRUE}
+```{r Graph_of_mean_after_imputing, echo = TRUE}
 correctedSumData=tapply(correctedActivities$steps, correctedActivities$fdate,sum, na.rm=TRUE)
 png(filename=".//figure/Total_number_of_steps_per_day_(Histogram)(corrected).png", width = 480, height = 480, units = "px", pointsize = 12, bg = "white", res = NA, family = "", restoreConsole = TRUE)
 correctedSum = data.frame(dimnames(correctedSumData),correctedSumData)
@@ -117,15 +116,18 @@ names(correctedSum)=c("Date", "Steps")
 #hist(correctedSumData)
 
 ggplot(data = correctedSum, aes(Steps), ordered=TRUE) + geom_histogram(origin = 0, binwidth=5000, aes(fill = ..count..)) +
-  ggtitle("Total Number of Steps Taken Per Day")
-
-#dev.off()
-#png(filename=".//figure/Total_number_of_steps_per_day_(corrected).png", width = 480, height = 480, units = "px", pointsize = 12, bg = "white", res = NA, family = "", restoreConsole = TRUE)
-a = ggplot(data = correctedSum, aes(x=as.Date(Date), y=Steps), ordered=TRUE) + geom_line() + geom_point()+
-  labs(x = "Month", y = " Total Number of Steps Taken Each Day")
-a
+ggtitle("Total Number of Steps Taken Per Day")
 
 dev.off()
+ggplot(data = correctedSum, aes(Steps), ordered=TRUE) + geom_histogram(origin = 0, binwidth=5000, aes(fill = ..count..)) +
+ggtitle("Total Number of Steps Taken Per Day")
+
+png(filename=".//figure/Total_number_of_steps_per_day_(corrected).png", width = 480, height = 480, units = "px", pointsize = 12, bg = "white", res = NA, family = "", restoreConsole = TRUE)
+ggplot(data = correctedSum, aes(x=as.Date(Date), y=Steps), ordered=TRUE) + geom_line() + geom_point()+
+  labs(x = "Month", y = " Total Number of Steps Taken Each Day")
+dev.off()
+ggplot(data = correctedSum, aes(x=as.Date(Date), y=Steps), ordered=TRUE) + geom_line() + geom_point()+
+  labs(x = "Month", y = " Total Number of Steps Taken Each Day")
 ```
 
 ###The mean and median of the corrected activities

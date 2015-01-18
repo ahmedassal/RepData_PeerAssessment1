@@ -17,12 +17,12 @@ Data are downloaded from http://d396qusza40orc.cloudfront.net/repdata%2Fdata%2Fa
 ```{r Data Downloading, echo = TRUE}
 setwd("D:/Woking/AHA/DEV/John Hopkins Data Science/ReproducibleResearch/RepData_PeerAssessment1")
 
-#fileURL="http://d396qusza40orc.cloudfront.net/repdata%2Fdata%2Factivity.zip"
-#if(!file.exists("gettingData")){
-  #dir.create("gettingData")
-#}
+fileURL="http://d396qusza40orc.cloudfront.net/repdata%2Fdata%2Factivity.zip"
+if(!file.exists("gettingData")){
+  dir.create("gettingData")
+}
 
-#download.file(fileURL, destfile = "activity.zip", method="auto")
+download.file(fileURL, destfile = "activity.zip", method="auto")
 #list.files(".//gettingData")
 #activityDateDownloaded = date()
 ```
